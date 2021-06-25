@@ -33,9 +33,10 @@ class MainAdapter (private val users: ArrayList<PageResult>) : RecyclerView.Adap
         holder.bind(users[position])
     }
 
-    fun addResults(pageResult: Array<PageResult>) {
+    fun addResults(pageResult: Array<PageResult>, clear: Boolean) {
         this.users.apply {
-            clear()
+            if (clear)
+                clear()
             addAll(pageResult)
         }
 
