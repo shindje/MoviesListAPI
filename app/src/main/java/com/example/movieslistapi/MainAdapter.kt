@@ -8,7 +8,7 @@ import com.bumptech.glide.Glide
 import com.example.movieslistapi.data.model.PageResult
 import kotlinx.android.synthetic.main.rv_item.view.*
 
-class MainAdapter (private val users: ArrayList<PageResult>) : RecyclerView.Adapter<MainAdapter.DataViewHolder>() {
+class MainAdapter (private val movies: ArrayList<PageResult>, private val onClick: (Int) -> Unit) : RecyclerView.Adapter<MainAdapter.DataViewHolder>() {
 
     class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -27,14 +27,16 @@ class MainAdapter (private val users: ArrayList<PageResult>) : RecyclerView.Adap
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder =
         DataViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.rv_item, parent, false))
 
-    override fun getItemCount(): Int = users.size
+    override fun getItemCount(): Int = movies.size
 
     override fun onBindViewHolder(holder: DataViewHolder, position: Int) {
-        holder.bind(users[position])
+        val movie = movies[position]
+        holder.bind(movie)
+        holder.itemView.setOnClickListener { onClick(movie.id) }
     }
 
     fun addResults(pageResult: Array<PageResult>, clear: Boolean) {
-        this.users.apply {
+        this.movies.apply {
             if (clear)
                 clear()
             addAll(pageResult)

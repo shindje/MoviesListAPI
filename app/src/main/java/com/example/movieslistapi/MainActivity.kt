@@ -1,5 +1,6 @@
 package com.example.movieslistapi
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
@@ -14,6 +15,7 @@ import com.example.movieslistapi.data.Status
 import com.example.movieslistapi.data.model.Page
 import com.example.movieslistapi.data.model.PageResult
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainViewModel
@@ -39,13 +41,13 @@ class MainActivity : AppCompatActivity() {
     private fun setupViewModel() {
         viewModel = ViewModelProviders.of(
             this,
-            ViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
+            MainViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
         ).get(MainViewModel::class.java)
     }
 
     private fun setupUI() {
         recyclerView.layoutManager = GridLayoutManager(this, 2)
-        adapter = MainAdapter(arrayListOf())
+        adapter = MainAdapter(arrayListOf()) { id -> onItemClickListener(id) }
         recyclerView.adapter = adapter
 
         fabLoadMore.setOnClickListener { loadMore() }
@@ -66,7 +68,7 @@ class MainActivity : AppCompatActivity() {
                         pb.visibility = View.VISIBLE
                     }
                     Status.ERROR -> {
-                        pb.visibility = View.VISIBLE
+                        pb.visibility = View.GONE
                         Toast.makeText(this, status.data as String, Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -88,5 +90,11 @@ class MainActivity : AppCompatActivity() {
             page++
             setupObservers()
         }
+    }
+
+    fun onItemClickListener(id: Int) {
+        val intent = Intent(this, DetailsActivity::class.java)
+        intent.putExtra("id", id)
+        startActivity(intent)
     }
 }

@@ -9,13 +9,13 @@ import com.example.movieslistapi.data.Status
 import kotlinx.coroutines.Dispatchers
 import java.lang.Exception
 
-class MainViewModel(private val repository: Repository) : ViewModel() {
+class DetailsViewModel(private val repository: Repository) : ViewModel() {
 
-    fun getUsers(page: Int) = liveData(Dispatchers.IO) {
+    fun getMovieInfo(id: Int) = liveData(Dispatchers.IO) {
         emit(Status.LOADING)
         try {
             val success = Status.SUCCESS
-            success.data = repository.getPage(page)
+            success.data = repository.getMovieInfo(id)
             emit(success)
         } catch (e: Exception) {
             val error = Status.ERROR
@@ -25,11 +25,11 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
     }
 }
 
-class MainViewModelFactory(private val apiHelper: ApiHelper) : ViewModelProvider.Factory {
+class DetailsViewModelFactory(private val apiHelper: ApiHelper) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            return MainViewModel(Repository(apiHelper)) as T
+        if (modelClass.isAssignableFrom(DetailsViewModel::class.java)) {
+            return DetailsViewModel(Repository(apiHelper)) as T
         }
         throw IllegalArgumentException("Unknown class name")
     }

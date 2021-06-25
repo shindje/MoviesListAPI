@@ -12,4 +12,11 @@ class ApiHelper(private val apiService: ApiService) {
             300,
             "ru-Ru"
         )
+
+    suspend fun getMovieInfo(id: Int) =
+        apiService.getMovieInfo(
+            id,
+            API_KEY,
+            "ru-Ru"
+        )
 }
