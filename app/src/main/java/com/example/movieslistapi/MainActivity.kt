@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
-        viewModel.getUsers(page).observe(this, Observer {
+        viewModel.getMovies(page).observe(this, Observer {
             it?.let { status ->
                 when (status) {
                     Status.SUCCESS -> {
