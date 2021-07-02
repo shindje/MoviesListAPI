@@ -2,7 +2,7 @@ package com.example.movieslistapi.data
 
 val API_KEY = "274f828ad283bd634ef4fc1ee4af255f"
 
-class ApiHelper(private val apiService: ApiService) {
+open class ApiHelper(private val apiService: ApiService) {
 
     suspend fun getPage(page: Int) =
         apiService.getPage(

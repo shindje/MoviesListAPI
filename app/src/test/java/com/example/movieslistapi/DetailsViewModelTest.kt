@@ -4,7 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.example.movieslistapi.data.ApiHelper
 import com.example.movieslistapi.data.Status
-import com.example.movieslistapi.data.model.Page
+import com.example.movieslistapi.data.model.Movie
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert
 import org.junit.Before
@@ -13,17 +13,16 @@ import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
-import java.lang.Exception
 
 @ExperimentalCoroutinesApi
-class MainViewModelTest {
+class DetailsViewModelTest {
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
     @get:Rule
     var testCoroutineRule = TestCoroutineRule()
 
-    private lateinit var mainViewModel: MainViewModel
+    private lateinit var detailsViewModel: DetailsViewModel
 
     @Mock
     private lateinit var apiHelper: ApiHelper
@@ -31,14 +30,14 @@ class MainViewModelTest {
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        mainViewModel = MainViewModelFactory(apiHelper).create(MainViewModel::class.java)
+        detailsViewModel = DetailsViewModelFactory(apiHelper).create(DetailsViewModel::class.java)
     }
 
     @Test
     fun liveData_TestReturnValueIsNotNull() {
         testCoroutineRule.runBlockingTest {
             val observer = Observer<Status> {}
-            val liveData = mainViewModel.getMovies(1)
+            val liveData = detailsViewModel.getMovieInfo(1)
             try {
                 liveData.observeForever(observer)
                 //waiting for any data
@@ -54,7 +53,7 @@ class MainViewModelTest {
     fun liveData_TestReturnLoadingAsFirstValue() {
         testCoroutineRule.runBlockingTest {
             val observer = Observer<Status> {}
-            val liveData = mainViewModel.getMovies(1)
+            val liveData = detailsViewModel.getMovieInfo(1)
             try {
                 liveData.observeForever(observer)
                 //waiting for first data
@@ -70,16 +69,16 @@ class MainViewModelTest {
     @Test
     fun liveData_TestReturnMockedValue() {
         testCoroutineRule.runBlockingTest {
-            Mockito.`when`(apiHelper.getPage(1)).thenReturn(Page(1, arrayOf(), 1))
+            Mockito.`when`(apiHelper.getMovieInfo(1)).thenReturn(Movie(1, "", arrayOf(), "", "", "", 0, 0.0))
 
             val observer = Observer<Status> {}
-            val liveData = mainViewModel.getMovies(1)
+            val liveData = detailsViewModel.getMovieInfo(1)
             try {
                 liveData.observeForever(observer)
                 //waiting for first not LOADING data
                 while (liveData.value == null || liveData.value == Status.LOADING) {}
-                val pageData = liveData.value!!.data as Page
-                Assert.assertEquals(pageData.page, 1)
+                val movieData = liveData.value!!.data as Movie
+                Assert.assertEquals(movieData.id, 1)
             } finally {
                 liveData.removeObserver(observer)
             }
@@ -89,10 +88,10 @@ class MainViewModelTest {
     @Test
     fun liveData_TestReturnError() {
         testCoroutineRule.runBlockingTest {
-            Mockito.`when`(apiHelper.getPage(1)).thenThrow(RuntimeException())
+            Mockito.`when`(apiHelper.getMovieInfo(1)).thenThrow(RuntimeException())
 
             val observer = Observer<Status> {}
-            val liveData = mainViewModel.getMovies(1)
+            val liveData = detailsViewModel.getMovieInfo(1)
             try {
                 liveData.observeForever(observer)
                 //waiting for first not LOADING data
