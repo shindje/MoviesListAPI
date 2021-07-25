@@ -11,7 +11,7 @@ import java.lang.Exception
 
 class MainViewModel(private val repository: Repository) : ViewModel() {
 
-    fun getUsers(page: Int) = liveData(Dispatchers.IO) {
+    fun getMovies(page: Int) = liveData(Dispatchers.IO) {
         emit(Status.LOADING)
         try {
             val success = Status.SUCCESS
